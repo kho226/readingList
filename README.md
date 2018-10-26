@@ -1,0 +1,2 @@
+# readingList
+reliable, redundant, distributed
