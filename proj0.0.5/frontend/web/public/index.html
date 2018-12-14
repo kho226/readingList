@@ -1,0 +1,70 @@
+<!doctype html>
+<html data-framework="vue">
+
+<head>
+  <meta charset="utf-8">
+  <title>Little Book Shoppe</title>
+  <link rel="stylesheet" href="css/index.css">
+  <!-- this needs to be loaded before guide's inline scripts -->
+  <script src="https://vuejs.org/js/vue.js"></script>
+  <!-- $http -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <!-- -->
+  <script src="https://unpkg.com/director@1.2.8/build/director.js"></script>
+  <!-- websocket sync between multiple tabs -->
+  <script src="readingList/iris-ws.js"></script>
+  <!-- -->
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <section class="readinglistapp">
+    <header class="header">
+      <h1>Just Do It.</h1>
+      <input class="new-book" autofocus autocomplete="off" placeholder="What's next on your reading list?" v-model="newBook" @keyup.enter="addBook">
+    </header>
+    <section class="main" v-show="books.length" v-cloak>
+      <input class="toggle-all" type="checkbox" v-model="allDone">
+      <ul class="reading-list">
+        <li v-for="book in filteredBooks" class="book" :key="book.id" :class="{ completed: book.completed, editing: book == editedBook }">
+          <div class="view">
+            <input class="toggle" type="checkbox" @click="completeBook(book)">
+            <label @dblclick="editBook(book)">{{ book.title }}</label>
+            <button class="destroy" @click="removeBook(book)"></button>
+          </div>
+          <input class="edit" type="text" v-model="book.title" v-book-focus="book == editedBook" @blur="doneEdit(book)" @keyup.enter="doneEdit(book)"
+            @keyup.esc="cancelEdit(book)">
+        </li>
+      </ul>
+    </section>
+    <footer class="footer" v-show="books.length" v-cloak>
+      <span class="book-count">
+        <strong>{{ remaining }}</strong> {{ remaining | pluralize }} left
+      </span>
+      <ul class="filters">
+        <li>
+          <a href="#/all" :class="{ selected: visibility == 'all' }">All</a>
+        </li>
+        <li>
+          <a href="#/active" :class="{ selected: visibility == 'active' }">Active</a>
+        </li>
+        <li>
+          <a href="#/completed" :class="{ selected: visibility == 'completed' }">Finished</a>
+        </li>
+      </ul>
+      <button class="clear-completed" @click="removeCompleted" v-show="books.length > remaining">
+        Clear Finished Books
+      </button>
+    </footer>
+  </section>
+  <footer class="info">
+    <p>Double-click to edit a book</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+
